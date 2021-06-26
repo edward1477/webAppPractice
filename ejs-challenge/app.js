@@ -15,7 +15,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-// Router: all get request create here
+// Router: Get request section
 app.get("/", function (req, res) {
   res.render("home", { homeStartingContent: homeStartingContent });
 });
@@ -32,8 +32,13 @@ app.get("/compose", function (req, res) {
   res.render("compose");
 });
 
-
-
+// Post rquest section
+app.post("/compose", function (req, res) {
+  const post = {
+    title: req.body.postTitle,
+    content: req.body.postBody
+  };
+});
 
 
 
