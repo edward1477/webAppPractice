@@ -36,6 +36,21 @@ app.get("/articles", function (req, res) {
     });
 });
 
+//2. POST request to the collections (articles), add one new articles to the collections
+app.post("/articles", function (req, res) {
+    const newArticle = new Article({
+        title: req.body.title,
+        content: req.body.content
+    });
+    newArticle.save(function (err) {
+        if (!err) {
+            res.send("Sucessfully added a new article.");
+        } else {
+            res.send(err);
+        }
+    });
+});
+
 //Start and continue monitoring the port for any incoming request
 app.listen(3000, function () {
     console.log("Server started on port 3000.");
