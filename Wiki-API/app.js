@@ -23,44 +23,46 @@ const articleSchema = {
 //3. Create a mongoose mode based on the schema created
 const Article = mongoose.model("Article", articleSchema);
 
-//RESTful implementations
-//1. GET request to the collections (articles), fetches ALL the articles
-app.get("/articles", function (req, res) {
-    Article.find({}, function (err, foundArticles) {
-        if (!err) {
-            //console.log(foundArticles); use this to test for our code in first glance
-            res.send(foundArticles);
-        } else {
-            res.send(err);
-        }
-    });
-});
+//RESTful implementations using chain route method 
+app.route("/articles")
 
-//2. POST request to the collections (articles), add one new articles to the collections
-app.post("/articles", function (req, res) {
-    const newArticle = new Article({
-        title: req.body.title,
-        content: req.body.content
-    });
-    newArticle.save(function (err) {
-        if (!err) {
-            res.send("Sucessfully added a new article.");
-        } else {
-            res.send(err);
-        }
-    });
-});
+    //1. GET request to the collections (articles), fetches ALL the articles
+    .get(function (req, res) {
+        Article.find({}, function (err, foundArticles) {
+            if (!err) {
+                //console.log(foundArticles); use this to test for our code in first glance
+                res.send(foundArticles);
+            } else {
+                res.send(err);
+            }
+        });
+    })
 
-//3. DELETE request to the collections (articles), add one new articles to the collections
-app.delete("/articles", function (req, res) {
-    Article.deleteMany({}, function (err) {
-        if (!err) {
-            res.send("Sucessfully deleted all articles.")
-        } else {
-            res.send(err);
-        }
+    //2. POST request to the collections (articles), add one new articles to the collections
+    .post(function (req, res) {
+        const newArticle = new Article({
+            title: req.body.title,
+            content: req.body.content
+        });
+        newArticle.save(function (err) {
+            if (!err) {
+                res.send("Sucessfully added a new article.");
+            } else {
+                res.send(err);
+            }
+        });
+    })
+
+    //3. DELETE request to the collections (articles), add one new articles to the collections
+    .delete(function (req, res) {
+        Article.deleteMany({}, function (err) {
+            if (!err) {
+                res.send("Sucessfully deleted all articles.")
+            } else {
+                res.send(err);
+            }
+        });
     });
-});
 
 //Start and continue monitoring the port for any incoming request
 app.listen(3000, function () {
