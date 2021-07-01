@@ -51,6 +51,17 @@ app.post("/articles", function (req, res) {
     });
 });
 
+//3. DELETE request to the collections (articles), add one new articles to the collections
+app.delete("/articles", function (req, res) {
+    Article.deleteMany({}, function (err) {
+        if (!err) {
+            res.send("Sucessfully deleted all articles.")
+        } else {
+            res.send(err);
+        }
+    });
+});
+
 //Start and continue monitoring the port for any incoming request
 app.listen(3000, function () {
     console.log("Server started on port 3000.");
