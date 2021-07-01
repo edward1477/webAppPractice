@@ -23,6 +23,8 @@ const articleSchema = {
 //3. Create a mongoose mode based on the schema created
 const Article = mongoose.model("Article", articleSchema);
 
+////////////////////////////////// Request Targeting all Ariticles //////////////////////////
+
 //RESTful implementations using chain route method 
 app.route("/articles")
 
@@ -63,6 +65,59 @@ app.route("/articles")
             }
         });
     });
+
+////////////////////////////////// Request Targeting a specified Ariticles //////////////////////////
+app.route("/articles/:articleTitle")
+    .get(function (req, res) {
+        Article.findOne({ title: req.params.articleTitle }, function (err, foundArticle) {
+            if (foundArticle) {
+                res.send(foundArticle);
+            } else {
+                res.send("No articles matching that title was found.");
+            }
+        });
+    })
+
+    .put(function (req, res) {
+        Article.update(
+            { title: req.params.articleTitle },
+            { title: req.body.title, content: req.body.content },
+            { overwrite: true },
+            function (err, results) {
+                if (!err) {
+                    res.send("Sucessfully updated article.");
+                } else {
+                    res.send(err);
+                }
+            });
+    })
+
+    .patch(function (req, res) {
+        Article.update(
+            { title: req.params.articleTitle },
+            { $set: req.body },
+            function (req, res) {
+                if (!err) {
+                    res.send("Sucessfully update article.");
+                } else {
+                    res.send(err);
+                }
+            });
+    })
+
+    .delete(function (req, res) {
+        Article.deleteOne(
+            { title: req.params.articleTitle },
+            function (req, res) {
+                if (!err) {
+                    res.send("Sucessfully deleted articles.");
+                } else {
+                    res.send(err);
+                }
+            });
+    });
+
+
 
 //Start and continue monitoring the port for any incoming request
 app.listen(3000, function () {
