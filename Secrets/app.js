@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
+const encrypt = require("mongoose-encryption");
 
 const app = express();
 
@@ -14,12 +15,18 @@ app.use(express.static("public"));
 mongoose.connect("mongodb://localhost:27017/userDB", { useNewUrlParser: true, useUnifiedTopology: true });
 
 //2. Create the dataBase collection's schema
-const userSchema = {
+// If encryption is implemetned, we need to use official mongoose schema object
+const userSchema = new mongoose.Schema({
     email: String,
     password: String
-};
+});
 
-//3. Create the corresponding mongoose model to handle this collection
+//3. In order to use mongoose-encryption, we need to create a varible to store a user defined secret string and enable the plug-in
+const secret = "Thisisourlittlesecret.";
+userSchema.plugin(encrypt, { secret: secret, encryptedFields: ["password"] });
+
+
+//4. Create the corresponding mongoose model to handle this collection
 const User = mongoose.model("User", userSchema);
 
 app.get("/", function (req, res) {
@@ -34,6 +41,7 @@ app.get("/register", function (req, res) {
     res.render("register");
 });
 
+// Handle POST request of new user registration
 app.post("/register", function (req, res) {
     const newUser = new User({
         email: req.body.username,
@@ -48,6 +56,7 @@ app.post("/register", function (req, res) {
     });
 });
 
+// Handle POST request of existing user login
 app.post("/login", function (req, res) {
     const username = req.body.username;
     const password = req.body.password;
