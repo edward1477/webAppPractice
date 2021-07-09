@@ -1,4 +1,5 @@
 //jshint esversion:6
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
@@ -22,8 +23,8 @@ const userSchema = new mongoose.Schema({
 });
 
 //3. In order to use mongoose-encryption, we need to create a varible to store a user defined secret string and enable the plug-in
-const secret = "Thisisourlittlesecret.";
-userSchema.plugin(encrypt, { secret: secret, encryptedFields: ["password"] });
+//const secret = "Thisisourlittlesecret.";
+userSchema.plugin(encrypt, { secret: process.env.SECRET, encryptedFields: ["password"] });
 
 
 //4. Create the corresponding mongoose model to handle this collection
