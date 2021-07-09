@@ -4,7 +4,14 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
-const encrypt = require("mongoose-encryption");
+// level 2: Encryption
+//const encrypt = require("mongoose-encryption"); 
+//Not use encryption when we turn to use Hash
+
+// Level 3: Hash function
+const md5 = require("md5");
+
+
 
 const app = express();
 
@@ -23,8 +30,14 @@ const userSchema = new mongoose.Schema({
 });
 
 //3. In order to use mongoose-encryption, we need to create a varible to store a user defined secret string and enable the plug-in
-//const secret = "Thisisourlittlesecret.";
-userSchema.plugin(encrypt, { secret: process.env.SECRET, encryptedFields: ["password"] });
+
+//Level 2: Encryption
+// ***Place this kind of secret information in environment variable .env file
+//userSchema.plugin(encrypt, { secret: process.env.SECRET, encryptedFields: ["password"] });
+//Not use encryption when we turn to use Hash
+
+// Level 3: Hash function
+
 
 
 //4. Create the corresponding mongoose model to handle this collection
@@ -46,7 +59,7 @@ app.get("/register", function (req, res) {
 app.post("/register", function (req, res) {
     const newUser = new User({
         email: req.body.username,
-        password: req.body.password
+        password: md5(req.body.password)
     });
     newUser.save(function (err) {
         if (err) {
@@ -60,7 +73,7 @@ app.post("/register", function (req, res) {
 // Handle POST request of existing user login
 app.post("/login", function (req, res) {
     const username = req.body.username;
-    const password = req.body.password;
+    const password = md5(req.body.password);
 
     User.findOne({ email: username }, function (err, foundUser) {
         if (err) {
