@@ -2,7 +2,6 @@ const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
 const Campground = require("./models/campground");
-const campground = require("./models/campground");
 
 
 // 1. Connection to local MongDB database
@@ -11,6 +10,7 @@ mongoose.connect("mongodb://localhost:27017/yelp-camp", {
     useCreateIndex: true,
     useUnifiedTopology: true
 });
+
 
 // 2. Logic check to ensure connection to the database success or not
 const db = mongoose.connection;
@@ -21,6 +21,7 @@ db.once("open", () => {
 
 
 const app = express();
+
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
