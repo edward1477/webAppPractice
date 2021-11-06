@@ -12,6 +12,14 @@
                 <a class="nav-link" href="/campgrounds/new">New Campground</a>
                 <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
             </div>
+            <div class="navbar-nav ml-auto">
+                <% if (!currentUser) { %>
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/register" class="nav-link">Sign Up</a>
+                    <% } else { %>
+                        <a href="/logout" class="nav-link">Sign Out</a>
+                        <% } %>
+            </div>
         </div>
     </div>
 </nav>

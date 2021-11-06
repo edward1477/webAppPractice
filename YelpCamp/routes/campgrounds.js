@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { campgroundSchema } = require("../schemas.js")
+const { isLoggedIn } = require("../middleware");
 const catchAsync = require("../utils/catchAsync")
 const ExpressError = require("../utils/ExpressError")
 const Campground = require("../models/campground");
@@ -38,11 +39,11 @@ router.get("/", catchAsync(async (req, res) => {
 // 3. CRUD operation: Create a new element and store in the resources
 // step 1. Need a GET request which render a form for user to input data
 // step 2. Need a POST request which catch the form inputs and save to DB
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
     res.render("campgrounds/new")
 })
 
-router.post("/", validateCampground, catchAsync(async (req, res, next) => {
+router.post("/", isLoggedIn, validateCampground, catchAsync(async (req, res, next) => {
         
         const campground = new Campground(req.body.campground)
         await campground.save()
@@ -65,7 +66,7 @@ router.get("/:id", catchAsync(async (req, res) => {
 // 4. CRUD operation: Update a single element in the resources
 // step 1. Need a GET request which render a form for user to input data
 // step 2. Need a PUT/PATCH request which catch the form inputs and save to DB
-router.get("/:id/edit", catchAsync(async (req, res) => {
+router.get("/:id/edit", isLoggedIn, catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id)
     if (!campground) {
         req.flash("error", "Campground not found!")
@@ -74,7 +75,7 @@ router.get("/:id/edit", catchAsync(async (req, res) => {
     res.render("campgrounds/edit", { campground })
 }))
 
-router.put("/:id", validateCampground, catchAsync(async (req, res) => {
+router.put("/:id", isLoggedIn, validateCampground, catchAsync(async (req, res) => {
     const campground = await Campground.findByIdAndUpdate(
         req.params.id,
         { ...req.body.campground })
@@ -83,7 +84,7 @@ router.put("/:id", validateCampground, catchAsync(async (req, res) => {
 }))
 
 // 5. CRUD operation: Delete a single element from the resources
-router.delete("/:id", catchAsync(async (req, res) => {
+router.delete("/:id", isLoggedIn, catchAsync(async (req, res) => {
     await Campground.findByIdAndDelete(req.params.id)
     req.flash("success", "Campground deleted successfully!")
     res.redirect("/campgrounds")
